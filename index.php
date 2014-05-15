@@ -180,7 +180,7 @@ class Coin {
 		$paid = $this -> amount * $this -> paid;
 		$value = $this -> getValue();
 		$profit = $value - $paid;
-		$quote = round($profit / $paid * 100, 2);
+		$quote = round($value / $paid * 100);
 		return($quote."%");
 	}
 	public function __toString() {
