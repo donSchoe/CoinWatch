@@ -121,7 +121,7 @@ class Ticker {
 		elseif ($this -> currentExchange == "mintpal") {
 			$data = $this -> data[$this -> currentExchange];
 			foreach ($data as $market) {
-				if ($market -> code == $pair && $market -> exchange == "BTC") {
+				if ($market -> code == strtoupper($pair) && $market -> exchange == "BTC") {
 					$value = $market -> last_price;
 					break;
 				}
