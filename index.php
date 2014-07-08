@@ -66,7 +66,7 @@ class Ticker {
 			
 		// Gibts keinen Eintrag für
 		if (!isSet($this -> exchanges[$exchange])) {
-			$this -> debug[] = "Exchange $exchange gibt es keine Konfiguration für.";
+			$this -> debug[] = "Exchange $exchange gibt es keine Konfiguration f&uuml;r.";
 			return(false);
 		}
 		$url = $this -> exchanges[$exchange];
@@ -86,7 +86,7 @@ class Ticker {
 		
 		$data = json_decode($data);
 		if (!$data) {
-			$this -> debug[] = "Kein gültiges JSON!";
+			$this -> debug[] = "Kein g&uuml;ltiges JSON!";
 			return(false);
 		}
 		$this -> debug[] = "Done";
