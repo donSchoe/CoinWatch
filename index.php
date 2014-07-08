@@ -1,12 +1,17 @@
+<html>
+	<head>
+		<meta charset="utf-8"> 
+	</head>
+<body>
 <pre>
 <?php
 $ticker = new Ticker();
 $ticker -> echoCoins();
 $ticker -> echoTotal();
-#$ticker -> debug();
+$ticker -> debug();
 
 class Ticker {
-	private $maxTries = 5;
+	private $maxTries = 10;
 	private $exchanges = array("bittrex" => "https://bittrex.com/api/v1/public/getmarketsummaries", 
 						       "polo" => "https://poloniex.com/ticker",
 							   "mintpal" => "https://api.mintpal.com/v1/market/summary/");
@@ -51,6 +56,7 @@ class Ticker {
 	
 	public function setExchange($exchange) {
 		if (isset($this -> data[$exchange])) {
+			$this -> output[] = $exchange;
 			$this -> debug[] = "Exchange $exchange wurde schon geladen.";
 			$this -> currentExchange = $exchange;
 			return(true);
@@ -66,6 +72,7 @@ class Ticker {
 		$ctx = stream_context_create(array('http' => array('timeout' => 2)));
 		$maxTries = $this -> maxTries;
 		for ($try = 1; $try <= $maxTries; $try++) {
+			$this -> debug[] = "#$try";
 			$data = @file_get_contents($url, 0, $ctx);
 			if ($data)
 				break;
@@ -75,16 +82,12 @@ class Ticker {
 			return(false);
 		}
 		
-		// Polo suckt und gibt kein richtiges JSON zurück -.-
-		if ($exchange == "polo") {
-			$data = str_replace(array("(", ")"), array("[", "]"), $data);
-		}
 		$data = json_decode($data);
 		if (!$data) {
 			$this -> debug[] = "Kein gültiges JSON!";
 			return(false);
 		}
-		$this -> debug[] = "Daten geladen";
+		$this -> debug[] = "Done";
 		$this -> data[$exchange] = $data;
 		$this -> currentExchange = $exchange;
 		return(true);		
@@ -113,7 +116,7 @@ class Ticker {
 		elseif ($this -> currentExchange == "polo") {
 			$prefix = "BTC_";
 			$pair = strtoupper($prefix.$pair);
-			$data = $this -> data[$this -> currentExchange][0];
+			$data = $this -> data[$this -> currentExchange];
 			if (isset($data -> $pair)) {
 				$value = $data -> $pair;
 			}
@@ -131,7 +134,11 @@ class Ticker {
 		// Wert gefunden, alles gut
 		if ($value) {
 			$this -> debug[] = "+$name => ".number_format($value, 8);
-			$this -> coins[$name] = new Coin($name, $value, $amount, $price);
+			$label = $name;
+			for ($i = 1; (isset($this -> coins[$label])); $i++) {
+				$label = $name.$i;
+			}
+			$this -> coins[$label] = new Coin($name, $value, $amount, $price);
 				return(true);
 		}
 		$this -> debug[] = "$pair wurde auf ".$this -> currentExchange." nicht gefunden.";
@@ -199,3 +206,5 @@ class Coin {
 }
 ?>
 </table>
+</body>
+</html>
