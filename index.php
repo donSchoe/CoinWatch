@@ -8,7 +8,7 @@
 $ticker = new Ticker();
 $ticker -> echoCoins();
 $ticker -> echoTotal();
-$ticker -> debug();
+$ticker -> debug(FALSE);
 
 class Ticker {
 	private $maxTries = 10;
@@ -38,9 +38,11 @@ class Ticker {
 		}
 	}
 	
-	public function debug() {
-		foreach ($this -> debug as $line) {
-			echo "$line\n";
+	public function debug($enabled = FALSE) {
+		if ($enabled) {
+			foreach ($this -> debug as $line) {
+				echo "$line\n";
+			}
 		}
 	}
 	
